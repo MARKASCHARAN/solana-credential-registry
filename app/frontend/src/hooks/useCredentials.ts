@@ -4,42 +4,48 @@ import { fetchCredentialsForSubject } from "@/lib/credentials";
 import { CredentialAccount } from "@/lib/types";
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
 
+type CredentialWithKey = {
+  publicKey: PublicKey;
+  account: CredentialAccount;
+};
+
 export const useCredentials = (subjectPubkey?: PublicKey) => {
-    const wallet = useAnchorWallet();
-    const [credentials, setCredentials] = useState<Array<{ publicKey: PublicKey; account: CredentialAccount }>>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
+  const wallet = useAnchorWallet();
 
-    const loadCredentials = useCallback(async () => {
-        // We need a subject to fetch for. If not provided, we check for a connected wallet.
-        const target = subjectPubkey || wallet?.publicKey;
+  const [credentials, setCredentials] = useState<CredentialWithKey[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-        if (!target) {
-            setLoading(false);
-            return;
-        }
+  const loadCredentials = useCallback(async () => {
+    const target = subjectPubkey ?? wallet?.publicKey;
+    if (!target) {
+      setLoading(false);
+      return;
+    }
 
-        try {
-            setLoading(true);
-            setError(null);
-            const data = await fetchCredentialsForSubject(target, wallet);
-            setCredentials(data);
-        } catch (err) {
-            console.error("Failed to load credentials:", err);
-            setError(err instanceof Error ? err : new Error("Unknown error"));
-        } finally {
-            setLoading(false);
-        }
-    }, [subjectPubkey, wallet]);
+    try {
+      setLoading(true);
+      setError(null);
 
-    useEffect(() => {
-        loadCredentials();
-    }, [loadCredentials]);
+      // ✅ NO wallet passed
+      const data = await fetchCredentialsForSubject(target);
+      setCredentials(data);
+    } catch (err) {
+      console.error("Failed to load credentials:", err);
+      setError(err instanceof Error ? err : new Error("Unknown error"));
+    } finally {
+      setLoading(false);
+    }
+  }, [subjectPubkey, wallet?.publicKey]);
 
-    return {
-        credentials,
-        loading,
-        error,
-        refetch: loadCredentials,
-    };
+  useEffect(() => {
+    loadCredentials();
+  }, [loadCredentials]);
+
+  return {
+    credentials,
+    loading,
+    error,
+    refetch: loadCredentials,
+  };
 };
