@@ -1,14 +1,16 @@
 import AppShell from "@/components/layout/AppShell";
 import { motion } from "framer-motion";
 
-const container = {
+import { Variants } from "framer-motion";
+
+const container: Variants = {
   hidden: {},
   visible: {
     transition: { staggerChildren: 0.12 },
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 14 },
   visible: {
     opacity: 1,
