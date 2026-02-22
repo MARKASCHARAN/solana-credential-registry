@@ -1,0 +1,29 @@
+# --------------------
+# Solana / Anchor
+# --------------------
+.anchor/
+test-ledger/
+ledger/
+**/test-ledger/
+**/ledger/
+**/rocksdb/
+**/*.log
+**/*.sst
+
+# --------------------
+# Rust
+# --------------------
+target/
+Cargo.lock
+**/*.rs.bk
+
+# --------------------
+# Node / Frontend
+# --------------------
+node_modules/
+.yarn/
+
+# --------------------
+# OS
+# --------------------
+.DS_Store
