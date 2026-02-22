@@ -31,7 +31,7 @@ export const useProfile = () => {
         try {
             setLoading(true);
             setError(null);
-            const data = await fetchProfile(wallet.publicKey, wallet);
+            const data = await fetchProfile(wallet.publicKey);
 
             setProfile(data);
             setStatus(data ? "exists" : "not_created");
